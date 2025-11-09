@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block body_class %}is-home{% endblock %}
+{% block title %}FlatmateFlow — домашние задачи по-честному{% endblock %}
+
+{% block content %}
+
+<!-- ГЕРО-БЛОК: фон-градиент, «пузырьки», CTA -->
+<div class="hero-wrap">
+  <div class="blobs">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <section class="hero container">
+    <div class="row align-items-center gy-4">
+      <div class="col-lg-7">
+        <h1 class="display-5 fw-bold hero-title">
+          FlatmateFlow — делите быт <span class="grad-text">игрово</span> и по-честному
+        </h1>
+        <p class="lead text-body-secondary mt-2">
+          Создавайте хозяйства, распределяйте задачи, набирайте баллы — и в конце месяца получайте приз!
+        </p>
+
+        <div class="d-flex gap-2 mt-3">
+          <a href="{% url 'tasks:dashboard' %}" class="btn btn-primary btn-lg pulse">Перейти в мои хозяйства</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'tasks:invitations_inbox' %}" class="btn btn-outline-light btn-lg glassy">Приглашения</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg glassy">Войти</a>
+            <a href="/admin/auth/user/add/" class="btn btn-outline-light btn-lg glassy">Регистрация</a>
+          {% endif %}
+        </div>
+
+        <!-- Мини-статы с анимацией чисел -->
+        <div class="mini-stats mt-4">
+          <div class="stat">
+            <div class="num" data-count="42">0</div>
+            <div class="cap">хозяйств</div>
+          </div>
+          <div class="stat">
+            <div class="num" data-count="873">0</div>
+            <div class="cap">выполненных задач</div>
+          </div>
+          <div class="stat">
+            <div class="num" data-count="5">0</div>
+            <div class="cap">сред. задач в день</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Декоративная превью-карточка задач -->
+      <div class="col-lg-5">
+        <div class="preview-card">
+          <div class="pc-head">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <div class="pc-body">
+            <div class="pc-item">
+              <div class="pc-left">
+                <div class="pc-check"></div>
+                Помыть посуду
+              </div>
+              <div class="badge bg-primary-subtle text-primary">+10</div>
+            </div>
+            <div class="pc-item">
+              <div class="pc-left">
+                <div class="pc-check done"></div>
+                Вынести мусор
+              </div>
+              <div class="badge bg-success-subtle text-success">+8</div>
+            </div>
+            <div class="pc-item">
+              <div class="pc-left">
+                <div class="pc-check"></div>
+                Купить продукты
+              </div>
+              <div class="badge bg-warning-subtle text-warning">+12</div>
+            </div>
+            <button class="btn btn-success w-100 mt-3 confetti-btn">Выполнено!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Как это работает -->
+<section class="container py-5">
+  <h2 class="h4 mb-3">Как это работает</h2>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="feat card h-100 shadow-sm">
+        <div class="card-body">
+          <h5>1. Создайте хозяйство</h5>
+          <p class="mb-0">Задайте название и приз за победу месяца. Пригласите участников по ссылке или логину.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="feat card h-100 shadow-sm">
+        <div class="card-body">
+          <h5>2. Публикуйте задачи</h5>
+          <p class="mb-0">«Вымыть пол», «Сходить за продуктами», «Вынести мусор» — каждая задача даёт баллы.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="feat card h-100 shadow-sm">
+        <div class="card-body">
+          <h5>3. Соревнуйтесь честно</h5>
+          <p class="mb-0">Закрывайте задачи — рейтинг покажет вклад каждого. В конце месяца — приз!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Зачем это нужно -->
+<section class="container pb-5">
+  <h2 class="h4 mb-3">Зачем это нужно</h2>
+  <ul class="list-group">
+    <li class="list-group-item">Справедливое распределение бытовых дел</li>
+    <li class="list-group-item">Прозрачная статистика без споров «кто сделал больше»</li>
+    <li class="list-group-item">Игровая мотивация: баллы, рейтинг и приз</li>
+  </ul>
+</section>
+
+<!-- Интересные факты -->
+<section class="container pb-5">
+  <h2 class="h4 mb-3">Интересные факты</h2>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h6 class="text-uppercase text-muted">Баланс мотивации</h6>
+          <p class="mb-0">Очки помогают замечать «невидимую» работу по дому и повышают вовлечённость участников.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h6 class="text-uppercase text-muted">Геймификация</h6>
+          <p class="mb-0">Лёгкий соревновательный дух часто ускоряет выполнение рутинных задач в 1.5–2 раза.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- О проекте -->
+<section class="container pb-5">
+  <h2 class="h4 mb-3">О проекте</h2>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <p class="mb-2">Автор: <b>Лада Богданович</b>. Дипломный проект.</p>
+      <p class="mb-0">Стек: Django, Django REST Framework, PostgreSQL, Django Templates (HTML/CSS/JS).</p>
+    </div>
+  </div>
+
+  <div class="text-center my-5">
+    <a href="{% url 'tasks:dashboard' %}" class="btn btn-primary btn-lg">Перейти в мои хозяйства</a>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_footer %}
+  {% include "footer.html" %}
+{% endblock %}

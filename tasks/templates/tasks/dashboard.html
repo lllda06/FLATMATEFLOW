@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Мои хозяйства</h3>
+  <a href="{% url 'tasks:household_create' %}" class="btn btn-primary">+ Создать хозяйство</a>
+</div>
+<a href="{% url 'tasks:invitations_inbox' %}" class="btn btn-outline-secondary btn-sm">Входящие приглашения</a>
+<div class="row g-3">
+  {% for h in households %}
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ h.name }}</h5>
+          <p class="card-text mb-1"><b>Подарок:</b> {{ h.gift }}</p>
+          <p class="text-muted">Участников: {{ h.members.count }}</p>
+          <a href="{% url 'tasks:household_detail' h.id %}" class="btn btn-outline-primary btn-sm">Открыть</a>
+          <a href="{% url 'tasks:household_stats' h.id %}" class="btn btn-outline-secondary btn-sm">Статистика</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>Пока нет хозяйств. Создай первое!</p>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block extra_footer %}
+  {% include "footer.html" %}
+{% endblock %}

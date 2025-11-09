@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Домашние хозяйства</h2>
+<ul>
+  {% for house in households %}
+  <li><b>{{ house.name }}</b> — приз: {{ house.gift }}</li>
+  {% empty %}
+  <li>Пока нет хозяйств.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+{% block extra_footer %}
+  {% include "footer.html" %}
+{% endblock %}

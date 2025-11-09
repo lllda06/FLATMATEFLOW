@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Входящие приглашения</h3>
+<ul class="list-group mt-3">
+  {% for inv in inbox %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        Хозяйство: <b>{{ inv.household.name }}</b>
+        <div class="small text-muted">От: {{ inv.inviter.username }} • действительно до {{ inv.expires_at|date:"d.m.Y H:i" }}</div>
+      </div>
+      <div>
+        <a class="btn btn-success btn-sm" href="{% url 'tasks:invite_accept_token' inv.token %}">Принять</a>
+        <a class="btn btn-outline-danger btn-sm" href="{% url 'tasks:invite_decline' inv.id %}">Отклонить</a>
+      </div>
+    </li>
+  {% empty %}
+    <li class="list-group-item">Новых приглашений нет.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+{% block extra_footer %}
+  {% include "footer.html" %}
+{% endblock %}

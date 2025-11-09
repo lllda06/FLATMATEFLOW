@@ -1,0 +1,284 @@
+/* ===========================
+   Дизайн-токены и темы
+   =========================== */
+
+:root{
+  /* Базовые токены интерфейса (light) */
+  --bg: #f7f7fb;
+  --bg-elev: #ffffff;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --brand: #0d6efd;
+
+  /* Акценты */
+  --acc1:#6366f1; /* indigo-500 */
+  --acc2:#22d3ee; /* cyan-400 */
+  --acc3:#f472b6; /* pink-400 */
+
+  /* Геро-градиент */
+  --bg1:#0f172a; /* slate-900 */
+  --bg2:#111827; /* gray-900 */
+
+  /* Вспомогательные оттенки текста */
+  --text-900:#0f172a;
+  --text-700:#374151;
+}
+
+html, body{ height:100%; }
+
+/* Тёмная тема */
+html[data-theme="dark"]{
+  --bg: #0b1023;
+  --bg-elev: #0f172a;
+  --text: #e5e7eb;
+  --muted: #e5e7eb;
+  --border: rgba(255,255,255,.12);
+  --brand: #7aa2ff;
+
+  /* геро-градиент чуть активнее */
+  --bg1:#0b1023;
+  --bg2:#0a0f1e;
+}
+
+/* ===========================
+   База и типовые элементы
+   =========================== */
+
+body { background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+img {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+}
+
+.navbar-brand { font-weight:700; letter-spacing:.2px; }
+
+.card { border-radius:14px; background: var(--bg-elev); border:1px solid var(--border); }
+
+a { color: var(--brand); }
+a:hover { opacity: .9; }
+
+/* Кнопки */
+.btn{ border-radius:.6rem; }
+.btn-lg{ border-radius:.8rem; }
+.btn-primary { background-color: var(--brand); border-color: var(--brand); }
+.btn-outline-light { color: var(--text); border-color: var(--border); }
+.btn-outline-light:hover { background: var(--border); color: var(--text); }
+
+/* Мини-аватар */
+.avatar{
+  width:32px;height:32px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--brand);color:#fff;font-weight:700;font-size:.9rem;
+  box-shadow:0 0 0 2px rgba(255,255,255,.15);
+}
+
+/* NAV стекло */
+.navbar .glassy{
+  backdrop-filter:saturate(160%) blur(6px);
+  border:1px solid rgba(255,255,255,.15);
+}
+
+/* Bootstrap корректировки для дарка */
+html[data-theme="dark"] .navbar.bg-dark { background-color: #0c1224 !important; }
+html[data-theme="dark"] .dropdown-menu { background: var(--bg-elev); border-color: var(--border); color: var(--text); }
+html[data-theme="dark"] .dropdown-item { color: var(--text); }
+html[data-theme="dark"] .dropdown-item:hover { background: rgba(255,255,255,.06); }
+
+/* Утилиты/мелочи */
+.section{ padding:2rem 0; }
+.section + .section{ padding-top:0; }
+.text-muted-2{ color:var(--muted)!important; }
+.table-sm td, .table-sm th{ padding:.5rem .75rem; }
+.badge-soft{
+  background: rgba(13,110,253,.12);
+  color:#0d6efd;
+  border:1px solid rgba(13,110,253,.2);
+}
+
+/* Ховеры карточек */
+.card.feat{
+  transition: transform .25s ease, box-shadow .25s ease;
+  border:1px solid var(--border);
+}
+.card.feat:hover{
+  transform: translateY(-4px);
+  box-shadow:0 12px 28px rgba(15,23,42,.25);
+}
+
+/* Кнопка с лёгкой пульсацией */
+.pulse{ position:relative; }
+.pulse::after{
+  content:""; position:absolute; inset:0; border-radius:.5rem; box-shadow:0 0 0 0 rgba(99,102,241,.45);
+  animation:pulse 2.4s ease-out infinite; pointer-events:none;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(99,102,241,.45);}
+  70%{box-shadow:0 0 0 22px rgba(99,102,241,0);}
+  100%{box-shadow:0 0 0 0 rgba(99,102,241,0);}
+}
+
+/* Конфетти (на будущее) */
+.confetti{ position:fixed; width:8px; height:14px; top:-10px; left:0; opacity:0.9; transform:rotate(0deg); pointer-events:none; z-index:1050; }
+
+/* Перекрас Bootstrap .text-muted под переменные */
+.text-muted{ color: var(--muted) !important; }
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .muted,
+html[data-theme="dark"] .text-muted-2{ color: var(--muted) !important; }
+
+/* ===========================
+   HERO (общий)
+   =========================== */
+
+.hero-wrap{
+  position:relative;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(99,102,241,.25), transparent 60%),
+    radial-gradient(1000px 500px at 110% 10%, rgba(34,211,238,.18), transparent 60%),
+    linear-gradient(180deg, var(--bg1), var(--bg2));
+  overflow:hidden;
+  border-radius:1.25rem;
+}
+.hero{
+  padding: clamp(48px, 7vw, 96px) 0;
+  color:#fff;
+}
+.hero-title{ line-height:1.1; }
+.grad-text{
+  background: linear-gradient(90deg, var(--acc1), var(--acc2), var(--acc3));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+
+/* Плавающие «пузырьки» */
+.blobs{ position:absolute; inset:0; pointer-events:none; filter: blur(36px) saturate(140%); }
+.blobs span{
+  position:absolute; width:240px; height:240px; border-radius:50%;
+  opacity:.35;
+  animation: float 18s ease-in-out infinite;
+  background: conic-gradient(from 0deg, var(--acc1), var(--acc2), var(--acc3), var(--acc1));
+}
+.blobs span:nth-child(1){ left:-60px; top:-40px; animation-delay:0s;}
+.blobs span:nth-child(2){ right:10%; top:10%; animation-delay:3s;}
+.blobs span:nth-child(3){ left:45%; bottom:-80px; animation-delay:6s;}
+.blobs span:nth-child(4){ left:5%; bottom:10%; width:180px; height:180px; animation-delay:9s;}
+.blobs span:nth-child(5){ right:-70px; top:-70px; width:300px; height:300px; animation-delay:12s;}
+@keyframes float{
+  0%,100%{ transform: translateY(0) translateX(0) scale(1); }
+  25%{ transform: translateY(-30px) translateX(20px) scale(1.04); }
+  50%{ transform: translateY(0) translateX(40px) scale(1.02); }
+  75%{ transform: translateY(30px) translateX(20px) scale(1.06); }
+}
+
+/* Адаптивные отступы у геро-кнопок */
+.hero-actions .btn{ min-width:220px; }
+@media (max-width:575.98px){
+  .hero-actions .btn{ min-width:unset; width:100%; }
+}
+
+/* Мини-статистики под героем */
+.mini-stats{ display:flex; gap:28px; flex-wrap:wrap; }
+.mini-stats .stat{ color:#e5e7eb; }
+.mini-stats .num{ font-size:clamp(26px,4vw,40px); font-weight:800; line-height:1; }
+.mini-stats .cap{ opacity:.75; font-size:14px; }
+
+/* ===========================
+   Карточки превью/панели задач
+   =========================== */
+
+.preview-card,
+.task-panel{
+  background:#0b1023; color:#e5e7eb;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px; overflow:hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  transform: translateZ(0);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.preview-card:hover, .task-panel:hover{ transform: translateY(-2px); box-shadow:0 16px 40px rgba(0,0,0,.45); }
+
+.pc-head, .task-panel .head{
+  height:38px; background:rgba(255,255,255,.06);
+  display:flex; align-items:center; gap:8px; padding:0 12px;
+}
+.pc-head .dot, .task-panel .dot{ width:10px; height:10px; border-radius:50%; background:#ef4444; }
+.pc-head .dot:nth-child(2), .task-panel .dot:nth-child(2){ background:#f59e0b; }
+.pc-head .dot:nth-child(3), .task-panel .dot:nth-child(3){ background:#22c55e; }
+
+.pc-body{ padding:14px; }
+.pc-item, .task-panel .rowi{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 6px; border-bottom:1px dashed rgba(255,255,255,.08);
+}
+.pc-item:last-child, .task-panel .rowi:last-child{ border-bottom:none; }
+.pc-left{ display:flex; align-items:center; gap:10px; }
+.pc-check{ width:18px; height:18px; border-radius:6px; border:2px solid #64748b; }
+.pc-check.done{ background:linear-gradient(135deg, #22c55e, #86efac); border-color:transparent; }
+.task-panel .pill{
+  font-size:.75rem; padding:.15rem .5rem; border-radius:999px;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+}
+
+/* ===========================
+   Главная (доп. блоки)
+   =========================== */
+
+.is-home .hero-wrap{ border-radius:1.25rem; } /* фон и так из .hero-wrap */
+.is-home .hero{ padding: clamp(48px, 7vw, 96px) 0; color:#fff; padding: 100px 200px; }
+.is-home .hero-title{ line-height:1.1; }
+.is-home .grad-text{ background: linear-gradient(90deg, var(--acc1), var(--acc2), var(--acc3)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.is-home .blobs{ filter: blur(36px) saturate(140%); }
+
+/* «Как это работает» — читаемость */
+.is-home .how-card{ background: var(--bg-elev); border:0; border-radius:16px; box-shadow:0 8px 24px rgba(15,23,42,.10); transition:all .25s ease; }
+.is-home .how-card:hover{ box-shadow:0 12px 28px rgba(15,23,42,.16); transform:translateY(-2px); }
+.is-home .how-card .card-title{ color: var(--text); }
+.is-home .how-card p{ color: var(--muted); } /* можно заменить на var(--text) для ещё большего контраста */
+
+/* ===========================
+   Страницы хозяйств и задач
+   =========================== */
+
+.page-title{ font-weight:800; letter-spacing:.2px; }
+.inbox-link{ border-radius:.6rem; }
+
+.house-card .card-title{ font-weight:700; }
+.house-card .meta{ color:#6b7280; font-size:.925rem; }
+
+.card-body {
+  color: var(--text);
+}
+
+.text-body-secondary {
+  color: #e5e7eb !important;
+}
+
+.btn-outline-light {
+    color: #e5e7eb;
+    border-color: rgba(255,255,255,.08);
+}
+
+.task-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.75rem .5rem; border-bottom:1px dashed #e5e7eb;
+}
+.task-row:last-child{ border-bottom:none; }
+.task-row .title{ font-weight:600; }
+.task-row .pts{ font-weight:700; color:#0d6efd; }
+
+/* ===========================
+   Таблицы/списки/карточки
+   =========================== */
+
+.list-group-item { background: var(--bg-elev); color: var(--text); border-color: var(--border); }
+
+/* ===========================
+   Alerts (перекрашенные)
+   =========================== */
+
+.alert-success{ background:#ecfdf5; color:#065f46; border-color:#a7f3d0; }
+.alert-info   { background:#eff6ff; color:#1e40af; border-color:#bfdbfe; }
+.alert-warning{ background:#fffbeb; color:#92400e; border-color:#fde68a; }
+.alert-danger { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
