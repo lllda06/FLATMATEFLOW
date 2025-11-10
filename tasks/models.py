@@ -1,35 +1,26 @@
 import uuid
 from datetime import timedelta
-
-from django.contrib.auth.models import User
-from django.db import models
 from django.utils import timezone
+from django.db import models
+from django.conf import settings
 
 
 class Household(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название")
-    description = models.TextField(blank=True, verbose_name="Описание")
-    gift = models.CharField(max_length=150, verbose_name="Подарок победителю месяца")
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    gift = models.CharField(max_length=150, help_text="Подарок победителю месяца")
     created_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="created_households",
-        verbose_name="Создатель",
+        related_name="created_households"
     )
     members = models.ManyToManyField(
-        User,
-        related_name="households",
-        verbose_name="Участники",
-        blank=True,
+        settings.AUTH_USER_MODEL,
+        related_name="households"
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    created_at = models.DateTimeField(default=timezone.now)
 
-    class Meta:
-        ordering = ["-created_at"]
-        verbose_name = "Хозяйство"
-        verbose_name_plural = "Хозяйства"
-
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
 
 
@@ -37,52 +28,35 @@ class Task(models.Model):
     household = models.ForeignKey(
         Household,
         on_delete=models.CASCADE,
-        related_name="tasks",
-        verbose_name="Хозяйство",
+        related_name="tasks"
     )
-    title = models.CharField(max_length=200, verbose_name="Задача")
-    description = models.TextField(blank=True, verbose_name="Описание")
-    points = models.PositiveIntegerField(default=10, verbose_name="Баллы")
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    points = models.PositiveIntegerField(default=10)
     assigned_to = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="assigned_tasks",
-        verbose_name="Назначено",
+        related_name="assigned_tasks"
     )
-    is_completed = models.BooleanField(default=False, verbose_name="Выполнено")
+    is_completed = models.BooleanField(default=False)
     completed_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="completed_tasks",
-        verbose_name="Кем выполнено",
+        related_name="completed_tasks"
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
-    completed_at = models.DateTimeField(
-        null=True, blank=True, db_index=True, verbose_name="Выполнено в"
-    )
+    created_at = models.DateTimeField(default=timezone.now)
+    completed_at = models.DateTimeField(null=True, blank=True, db_index=True)
 
-    class Meta:
-        ordering = ["-created_at"]
-        indexes = [
-            models.Index(fields=["household", "is_completed"]),
-            models.Index(fields=["completed_at"]),
-        ]
-        verbose_name = "Задача"
-        verbose_name_plural = "Задачи"
-
-    def __str__(self) -> str:
+    def __str__(self):
         return f"{self.title} ({self.points} баллов)"
 
 
-# --- helpers для значений по умолчанию (чтобы миграции собирались) ---
-
-def invite_generate_token() -> str:
+def invite_generate_token():
     return str(uuid.uuid4())
-
 
 def invite_default_expires_at():
     return timezone.now() + timedelta(days=7)
@@ -93,53 +67,43 @@ class Invitation(models.Model):
         PENDING = "PENDING", "Ожидает"
         ACCEPTED = "ACCEPTED", "Принято"
         DECLINED = "DECLINED", "Отклонено"
-        EXPIRED = "EXPIRED", "Просрочено"
+        EXPIRED  = "EXPIRED",  "Просрочено"
 
     token = models.CharField(
-        max_length=36, unique=True, default=invite_generate_token, editable=False
+        max_length=36,
+        unique=True,
+        default=invite_generate_token,
+        editable=False
     )
     household = models.ForeignKey(
         Household,
         on_delete=models.CASCADE,
-        related_name="invitations",
-        verbose_name="Хозяйство",
+        related_name="invitations"
     )
     inviter = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="sent_invitations",
-        verbose_name="Пригласивший",
+        related_name="sent_invitations"
     )
-    # Если отправляем «по коду», invitee может быть пустым
     invitee = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="received_invitations",
-        verbose_name="Кого пригласили",
+        related_name="received_invitations"
     )
     status = models.CharField(
-        max_length=10, choices=Status.choices, default=Status.PENDING, verbose_name="Статус"
+        max_length=10,
+        choices=Status.choices,
+        default=Status.PENDING
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
-    expires_at = models.DateTimeField(
-        default=invite_default_expires_at, verbose_name="Истекает"
-    )
-    accepted_at = models.DateTimeField(null=True, blank=True, verbose_name="Принято в")
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField(default=invite_default_expires_at)
+    accepted_at = models.DateTimeField(null=True, blank=True)
 
-    class Meta:
-        ordering = ["-created_at"]
-        indexes = [
-            models.Index(fields=["token"]),
-            models.Index(fields=["status", "expires_at"]),
-        ]
-        verbose_name = "Приглашение"
-        verbose_name_plural = "Приглашения"
-
-    def is_active(self) -> bool:
+    def is_active(self):
         return self.status == self.Status.PENDING and self.expires_at > timezone.now()
 
-    def __str__(self) -> str:
+    def __str__(self):
         who = self.invitee.username if self.invitee else "по коду"
         return f"Invite to {self.household.name} → {who} ({self.status})"

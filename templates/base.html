@@ -85,14 +85,16 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
-                                <a class="dropdown-item text-danger"
-                                   href="{% url 'logout' %}?next={% url 'tasks:home' %}">Выйти</a>
+                                <a class="dropdown-item" href="{% url 'accounts:logout' %}?next={% url 'tasks:home' %}">Выйти</a>
                             </li>
                         </ul>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="btn btn-outline-light btn-sm ms-lg-2" href="{% url 'login' %}">Войти</a>
+                        <a class="btn btn-outline-light btn-sm ms-lg-2" href="{% url 'accounts:login' %}">Войти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary btn-sm ms-lg-2" href="{% url 'accounts:signup' %}">Регистрация</a>
                     </li>
                 {% endif %}
             </ul>
