@@ -282,3 +282,133 @@ html[data-theme="dark"] .text-muted-2{ color: var(--muted) !important; }
 .alert-info   { background:#eff6ff; color:#1e40af; border-color:#bfdbfe; }
 .alert-warning{ background:#fffbeb; color:#92400e; border-color:#fde68a; }
 .alert-danger { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+
+
+/* -------------------------
+   Мобильный адаптив (≤ 992px)
+   ------------------------- */
+@media (max-width: 991.98px){
+  /* Контейнеры чуть шире отступы */
+  .container{
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* Герой: убираем жёсткие внутренние отступы */
+  .hero{
+    padding: clamp(40px, 9vw, 68px) 0;
+  }
+  .is-home .hero{
+    padding: clamp(40px, 9vw, 68px) 0 !important; /* перекрывает 100px 200px */
+  }
+
+  /* Заголовок/подзаголовок читаемые на телефоне */
+  .hero-title{
+    font-size: clamp(26px, 7.2vw, 40px);
+    line-height: 1.15;
+  }
+  .hero .lead{
+    font-size: clamp(15px, 4vw, 18px);
+    line-height: 1.5;
+  }
+  /* Кнопки — в колонку, на всю ширину */
+  .hero-actions{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px !important;
+  }
+  .hero-actions .btn{
+    min-width: 0;   /* убираем фикс мин. ширину */
+    width: 100%;
+  }
+
+  /* Мини-статы — центр и компактнее */
+  .mini-stats{
+    gap: 16px;
+    justify-content: center;
+  }
+  .mini-stats .num{ font-size: clamp(22px, 6vw, 32px); }
+  .mini-stats .cap{ font-size: 13px; }
+
+  /* Превью-карточка уходит под текст и центрируется */
+  .col-lg-5{
+    margin-top: 20px;
+  }
+  .preview-card.phone-mock{
+    max-width: 420px;
+    margin: 0 auto;
+    transform: translateZ(0);
+  }
+  .col-lg-7 {
+    margin-right: 300px;
+  }
+  .pc-body{ padding: 12px; }
+  .pc-item{ padding: 10px 6px; }
+  .pc-left{ gap: 8px; }
+  .pc-check{ width: 16px; height: 16px; border-radius: 5px; }
+
+  /* Мягче бейджи, чтобы не ломали строки */
+  .badge{
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  /* Снижаем «тяжёлые» декоративные эффекты */
+  .blobs{ opacity: .25; filter: blur(28px) saturate(130%); }
+  .pulse::after{ animation-duration: 2.8s; } /* чуть реже пульсация */
+}
+
+/* -------------------------
+   Узкие телефоны (≤ 576px)
+   ------------------------- */
+@media (max-width: 575.98px){
+  /* Чуть плотнее макет */
+  .container{
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  /* Заголовки ещё компактнее */
+  .hero-title{
+    font-size: clamp(24px, 8vw, 34px);
+  }
+  .hero .lead{
+    font-size: clamp(14px, 4.2vw, 16px);
+  }
+
+  /* Мини-статы — в две строки по центру */
+  .mini-stats{
+    justify-content: center;
+  }
+  .mini-stats .stat{
+    min-width: 120px;
+    text-align: center;
+  }
+
+  /* Карточка: комфортный тап-таргет */
+  .pc-item{ padding: 12px 8px; }
+  .confetti-btn{ padding: 12px 14px; }
+
+  /* Урезаем интенсивность «пузырей» на очень узких экранах */
+  .blobs{ display: none; } /* по желанию: можно скрыть совсем */
+}
+
+/* -------------------------
+   Точечные фиксы контрастности
+   ------------------------- */
+/* Светлый контур у outline-кнопок на тёмной карточке */
+.btn-outline-light{
+  color: #e5e7eb;
+  border-color: rgba(255,255,255,.16);
+}
+.btn-outline-light:hover{
+  background: rgba(255,255,255,.10);
+  color: #fff;
+}
+
+/* Чтобы .text-body-secondary не бледнела на светлой теме */
+@media (prefers-color-scheme: light){
+  .hero .text-body-secondary{
+    color: #475569 !important;
+  }
+}

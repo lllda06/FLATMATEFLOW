@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Уведомления{% endblock %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 mb-0">Уведомления</h1>
+            <form method="post" action="{% url 'notifications:mark_all_read' %}" class="mb-3">
+                {% csrf_token %}
+                <button class="btn btn-link btn-sm text-secondary p-0">
+                    Отметить всё прочитанным
+                </button>
+            </form>
+        </div>
+
+        {% if notifications %}
+            <div class="list-group">
+                {% for notif in notifications %}
+                    <div class="card mb-3 p-3 not_list_div {% if not notif.is_read %}border-warning bg-dark{% endif %}">
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>{{ notif.created_at }}</span>
+                            {% if not notif.is_read %}
+                                <span class="badge bg-warning text-dark">Новое</span>
+                            {% endif %}
+                        </div>
+                        <div class="fw-semibold mt-1">{{ notif.get_type_display }}</div>
+                        <div>{{ notif.body }}</div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Уведомлений пока нет.</p>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">Пока нет уведомлений.</p>
+        {% endif %}
+    </div>
+{% endblock %}

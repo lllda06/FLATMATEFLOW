@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="mb-4">Профиль</h1>
+
+  {% if messages %}
+    {% for m in messages %}
+      <div class="alert alert-{{ m.tags }} mb-3">{{ m }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="row g-4">
+    <!-- Левая колонка: аватар -->
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <div class="mb-3">
+            {% if request.user.avatar %}
+              <img src="{{ request.user.avatar.url }}" alt="avatar" class="rounded-circle" style="width: 140px; height: 140px; object-fit: cover;">
+            {% else %}
+              <div class="rounded-circle bg-body-secondary d-inline-flex align-items-center justify-content-center"
+                   style="width: 140px; height: 140px;">
+                  <span class="fs-1">{{ request.user.username|first|upper }}</span>
+              </div>
+            {% endif %}
+          </div>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ aform.as_p }}
+            <button class="btn btn-primary w-100" name="save_avatar">Обновить аватар</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="card-title">Пароль</h5>
+          <p class="card-text text-body-secondary">Советуем периодически менять пароль.</p>
+          <a class="btn btn-outline-secondary w-100" href="{% url 'accounts:password_change' %}">Сменить пароль</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Правая колонка: данные + e-mail prefs -->
+    <div class="col-lg-8">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Данные профиля</h5>
+          <form method="post">
+            {% csrf_token %}
+            {{ pform.as_p }}
+            <button class="btn btn-primary" name="save_profile">Сохранить</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">E-mail-уведомления</h5>
+          <form method="post">
+            {% csrf_token %}
+            {{ eform.as_p }}
+            <button class="btn btn-primary" name="save_prefs">Сохранить настройки</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

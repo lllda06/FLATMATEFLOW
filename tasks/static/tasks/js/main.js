@@ -79,3 +79,90 @@
   // если пользователь выбрал "auto", можно подписаться на смену системной темы:
   // но мы сохраняем явный light/dark. Если захочешь режим "auto" — скажи, добавлю тристейт.
 })();
+
+async function fetchJSON(url, opts={}) {
+  const r = await fetch(url, Object.assign({
+    headers: { "X-Requested-With": "XMLHttpRequest" }
+  }, opts));
+  if (!r.ok) throw new Error("Request failed");
+  return r.json();
+}
+
+async function refreshNotifBadge() {
+  try {
+    const data = await fetchJSON("/api/notifications/unread_count/");
+    const badge = document.getElementById("notifBadge");
+    if (!badge) return;
+    const n = data.count || 0;
+    badge.textContent = n;
+    badge.classList.toggle("d-none", n === 0);
+  } catch(e) {
+    // тихо игнорируем
+  }
+}
+
+async function loadNotifs() {
+  try {
+    const data = await fetchJSON("/api/notifications/?page=1");
+    const list = document.getElementById("notifList");
+    if (!list) return;
+    list.innerHTML = "";
+    data.results?.forEach(n => {
+      const div = document.createElement("div");
+      div.className = "border rounded p-2";
+      div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>${n.title}</strong>
+          ${n.is_read ? "" : '<span class="badge bg-primary">new</span>'}
+        </div>
+        <div class="small text-muted">${new Date(n.created_at).toLocaleString()}</div>
+        <div>${n.message || ""}</div>
+        ${!n.is_read ? `<button class="btn btn-sm btn-link p-0 mark-read" data-id="${n.id}">Отметить прочитанным</button>` : ""}
+      `;
+      list.appendChild(div);
+    });
+
+    list.addEventListener("click", async (ev) => {
+      const btn = ev.target.closest(".mark-read");
+      if (!btn) return;
+      const id = btn.getAttribute("data-id");
+      await fetchJSON(`/api/notifications/${id}/mark_read/`, { method: "POST", headers: {"X-CSRFToken": getCookie('csrftoken')} });
+      await loadNotifs();
+      await refreshNotifBadge();
+    }, { once: true });
+  } catch(e) {}
+}
+
+async function markAllRead() {
+  try {
+    await fetchJSON("/api/notifications/mark_all_read/", { method: "POST", headers: {"X-CSRFToken": getCookie('csrftoken')} });
+    await loadNotifs();
+    await refreshNotifBadge();
+  } catch(e) {}
+}
+
+function getCookie(name) { // стандартная утилита для CSRF
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const c = cookie.trim();
+      if (c.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(c.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  refreshNotifBadge();
+  setInterval(refreshNotifBadge, 30000); // каждые 30 сек
+  const offc = document.getElementById("notifOffcanvas");
+  if (offc) {
+    offc.addEventListener("show.bs.offcanvas", loadNotifs);
+  }
+  const btnAll = document.getElementById("markAllReadBtn");
+  if (btnAll) btnAll.addEventListener("click", markAllRead);
+});
