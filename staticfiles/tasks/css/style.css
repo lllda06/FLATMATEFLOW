@@ -83,6 +83,13 @@ body { background:#f7f7fb; color:var(--text-900); -webkit-font-smoothing:antiali
   transform: translateZ(0);
   transition: transform .3s ease, box-shadow .3s ease;
 }
+.notif-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ff4d4f; /* красная точка */
+}
 .preview-card:hover{ transform: translateY(-2px); box-shadow:0 16px 40px rgba(0,0,0,.45); }
 .pc-head{ height:38px; background:rgba(255,255,255,.06); display:flex; align-items:center; gap:8px; padding:0 12px; }
 .pc-head .dot{ width:10px; height:10px; border-radius:50%; background:#ef4444; }
@@ -257,7 +264,9 @@ html[data-theme="dark"]{
   --bg1:#0b1023;
   --bg2:#0a0f1e;
 }
-
+.not_list_div {
+  color: var(--text);
+}
 /* Базовые применения */
 body { background: var(--bg); color: var(--text); }
 .navbar-brand { font-weight: 700; }
@@ -280,25 +289,75 @@ a:hover { opacity: .9; }
 
 /* Автар и мини-профиль — оставляем как у тебя */
 .avatar{
-  width:32px;height:32px;border-radius:50%;
-  display:inline-flex;align-items:center;justify-content:center;
-  background:var(--brand);color:#fff;font-weight:700;font-size:.9rem;
-  box-shadow:0 0 0 2px rgba(255,255,255,.15);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #5561ff;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  overflow: hidden;
+}
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+.nav-user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
 }
 
-/* ====== Твои существующие стили (оставлены, немного связаны с переменными) ====== */
-
-:root{
-  /* оставил твои acc-переменные выше */
+.nav-user-avatar-wrapper {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
 }
 
-/* NAV стекло (оставляем) */
+.nav-user-avatar,
+.nav-user-avatar-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-user-avatar {
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.nav-user-avatar-fallback {
+  background: #5561ff;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.nav-user-name {
+  font-weight: 500;
+}
+
+/* NAV стекло */
 .navbar .glassy{
   backdrop-filter:saturate(160%) blur(6px);
   border:1px solid rgba(255,255,255,.15);
 }
 
-/* HERO (использует твои var(--bg1), var(--bg2), var(--acc*)) */
+/* HERO (использует var(--bg1), var(--bg2), var(--acc*)) */
 .hero-wrap{
   position:relative;
   background: radial-gradient(1200px 600px at 10% -10%, rgba(99,102,241,.25), transparent 60%),

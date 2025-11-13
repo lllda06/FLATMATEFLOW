@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Python / Django
 __pycache__/
 *.py[cod]
@@ -18,3 +19,25 @@ staticfiles/
 # OS
 .DS_Store
 Thumbs.db
+=======
+# Python / Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+/media/
+staticfiles/
+.env
+.env.*
+*.log
+
+# Virtualenv
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+>>>>>>> feature/auth-jwt

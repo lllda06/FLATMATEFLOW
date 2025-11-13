@@ -1,13 +1,21 @@
 from pathlib import Path
+import environ
 import os
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-9$&#54h7+qmikz#%n#*#o7tv#!!ff*ce9j0lz*z-8y23se4+rm'
+env = environ.Env(
+    DEBUG=(bool, False),
+)
+environ.Env.read_env(str(BASE_DIR / '.env'))
 
-DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+SECRET_KEY = env('SECRET_KEY')
+
+DEBUG = env.bool('DEBUG', default=False)
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost'])
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -20,6 +28,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'tasks',
     'accounts',
+    'notifications',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -42,7 +51,7 @@ SIMPLE_JWT = {
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'AUTH_TOKEN_CLASSES': ('rest_framework_jwt.tokens.AccessToken',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 }
 
 MIDDLEWARE = [
@@ -68,6 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'notifications.context_processors.notifications_counts',
             ],
         },
     },
@@ -76,14 +86,22 @@ TEMPLATES = [
 WSGI_APPLICATION = 'new_fm_flow.wsgi.application'
 ASGI_APPLICATION = 'new_fm_flow.asgi.application'
 
+# DATABASES = {
+#     'default': env.db(
+#         'DATABASE_URL',
+#         default='postgres://postgres:postgres@localhost:5432/new_fm_flow',
+#     )
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'new_fm_flow',
-        'USER': 'postgres',
-        'PASSWORD': 'lllda06',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env.str("POSTGRES_DB", default="new_fm_flow").strip(),
+        "USER": env.str("POSTGRES_USER", default="admin").strip(),
+        "PASSWORD": env.str("POSTGRES_PASSWORD", default="lllda06").strip(),
+        "HOST": env.str("POSTGRES_HOST", default="127.0.0.1").strip(),
+        "PORT": int(env("POSTGRES_PORT", default=5432)),
+        # опционально
+        # "OPTIONS": {"options": "-c client_encoding=UTF8"},
     }
 }
 
@@ -94,16 +112,37 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-LANGUAGE_CODE = 'ru-ru'
-TIME_ZONE = 'Europe/Warsaw'
-USE_I18N = True
+LANGUAGE_CODE = env('LANGUAGE_CODE', default='ru-ru')
+TIME_ZONE = env('TIME_ZONE', default='Europe/Warsaw')
 USE_TZ = True
 
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'tasks:dashboard'
 LOGOUT_REDIRECT_URL = 'tasks:home'
 
-STATIC_URL = 'static/'
+EMAIL_BACKEND = env(
+    'EMAIL_BACKEND',
+    default='django.core.mail.backends.smtp.EmailBackend'
+)
+
+EMAIL_HOST = env('EMAIL_HOST', default='localhost')
+EMAIL_PORT = env.int('EMAIL_PORT', default=25)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=False)
+EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='FlatmateFlow <no-reply@example.com>')
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    p for p in [
+        BASE_DIR / 'static',
+        BASE_DIR / 'tasks' / 'static',
+    ] if p.exists()
+]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'tasks/static'] if (BASE_DIR / 'static').exists() else []
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = env('MEDIA_ROOT', default=str(BASE_DIR / 'media'))
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
