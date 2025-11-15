@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import SignUpView
+from .views import SignUpView, activate
 from . import views
 
 app_name = 'accounts'
@@ -21,4 +21,5 @@ urlpatterns = [
     path("password/done/", auth_views.PasswordChangeDoneView.as_view(
         template_name="accounts/password_change_done.html",
     ), name="password_change_done"),
+    path("activate/<uidb64>/<token>/", activate, name="activate"),
 ]

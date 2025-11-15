@@ -8,7 +8,7 @@ from .models import Notification
 def notifications_list(request):
     notifications = (
         Notification.objects
-        .filter(user=request.user)
+        .filter(recipient=request.user)
         .order_by('-created_at')
     )
     return render(request, 'notifications/list.html', {
@@ -20,7 +20,7 @@ def notifications_list(request):
 def mark_all_read(request):
     (
         Notification.objects
-        .filter(user=request.user, is_read=False)
+        .filter(recipient=request.user, is_read=False)
         .update(is_read=True, read_at=timezone.now())
     )
     # возвращаем туда, откуда пришли, либо на страницу уведомлений

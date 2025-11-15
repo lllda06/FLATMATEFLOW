@@ -13,6 +13,7 @@ class User(AbstractUser):
     email_new_task = models.BooleanField("Письмо о новых задачах", default=True)
     email_invitation = models.BooleanField("Письмо о приглашениях", default=True)
     email_household_digest = models.BooleanField("Ежедневная сводка", default=False)
+    email_household_invites = models.BooleanField(default=True, verbose_name="Получать письма о приглашениях в хозяйство",)
 
     def public_name(self):
         return self.display_name or self.get_full_name() or self.username
