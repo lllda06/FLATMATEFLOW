@@ -33,7 +33,9 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
     <div class="container">
-        <img src="{% static 'tasks/images/logo.svg' %}" alt="FlatmateFlow">
+         <a class="navbar-brand fw-semibold" href="{% url 'tasks:home' %}">
+             <img src="{% static 'tasks/images/logo.svg' %}" alt="FlatmateFlow">
+         </a>
         <a class="navbar-brand fw-semibold" href="{% url 'tasks:home' %}"> FlatmateFlow</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"

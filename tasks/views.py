@@ -10,6 +10,7 @@ from tasks.api_services import get_households, get_household_tasks, get_househol
 from tasks.forms import TaskForm, HouseholdForm, InviteByUsernameForm
 from tasks.models import Household, Task, Invitation
 from tasks.services import create_task, update_task_status
+from tasks.stats_service import get_stats_for_household
 
 
 # Главная страница
@@ -86,11 +87,18 @@ def task_toggle_done(request, task_id):
 @login_required
 def household_stats(request, pk):
     house = get_object_or_404(Household, pk=pk)
+
     if request.user not in house.members.all() and request.user != house.created_by:
         return HttpResponseForbidden("Нет доступа.")
 
-    # Логика для статистики по хозяйству
-    return render(request, "tasks/stats.html", {"house": house})
+    stats = get_stats_for_household(house)
+
+    return render(request, "tasks/stats.html", {
+        "house": house,
+        "period": stats["period"],
+        "completed": stats["completed"],
+        "total_points": stats["total_points"],
+    })
 
 
 # Приглашение пользователя по логину

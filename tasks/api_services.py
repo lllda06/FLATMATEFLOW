@@ -1,8 +1,8 @@
-# tasks/api_services.py
 from django.db.models import Sum
 from django.http import JsonResponse
 from tasks.models import Household, Task
 from django.shortcuts import get_object_or_404
+from tasks.stats_service import get_stats_for_household
 
 def get_households(request):
     """API для получения всех хозяйств текущего пользователя"""
@@ -31,4 +31,17 @@ def get_household_stats(request, pk):
     return JsonResponse({
         'completed_tasks': completed_tasks,
         'total_points': total_points
+    })
+
+from tasks.stats_service import get_stats_for_household
+
+def get_stats_for_household(request, pk):
+    house = get_object_or_404(Household, pk=pk)
+    stats = get_stats_for_household(house)
+
+    return JsonResponse({
+        "period_start": stats["period"][0],
+        "period_end": stats["period"][1],
+        "completed": stats["completed"],
+        "total_points": stats["total_points"],
     })
