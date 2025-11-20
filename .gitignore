@@ -41,3 +41,10 @@ staticfiles/
 .DS_Store
 Thumbs.db
 >>>>>>> feature/auth-jwt
+
+# Убираем файлы и папки, связанные с библиотеками, которые не должны быть в git
+*.pyc
+*.pyo
+
+# Статические файлы
+/static/

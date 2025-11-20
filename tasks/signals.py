@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.conf import settings
 
+from notifications.models import Notification
 from .models import Invitation, Task
 from notifications.utils import create_notification
 
@@ -57,7 +57,7 @@ def on_task_created(sender, instance, created, **kwargs):
     household = task.household
 
     # Кого уведомляем: всех участников, кроме создателя
-    members_qs = household.members.exclude(id=task.created_by_id)
+    members_qs = household.members.exclude(id=task.created_by.id)
 
     title = "Новая задача в хозяйстве"
     body_template = (
@@ -81,4 +81,14 @@ def on_task_created(sender, instance, created, **kwargs):
             send_email=getattr(member, "email_task_updates", False),
             email_subject=email_subject,
             email_body=email_body,
+        )
+
+@receiver(post_save, sender=Task)
+def create_task_notification(sender, instance, created, **kwargs):
+    if created:  # Уведомление создается только при создании задачи
+        Notification.objects.create(
+            recipient=instance.created_by,  # Здесь нужно передать правильного получателя
+            title="Задача добавлена",
+            body=f"Вам назначена новая задача: {instance.title}",
+            type="task_assigned"
         )

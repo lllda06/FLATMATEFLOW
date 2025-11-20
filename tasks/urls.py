@@ -21,7 +21,6 @@ urlpatterns = [
     path("invite/<int:inv_id>/decline/", views.invite_decline, name="invite_decline"),
 
     # auth
-    path("signup/", views.signup, name="signup"),
 
     # простые API
     path("api/households/", views.api_households, name="api_households"),

@@ -69,7 +69,7 @@ ROOT_URLCONF = 'new_fm_flow.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -94,12 +94,12 @@ ASGI_APPLICATION = 'new_fm_flow.asgi.application'
 # }
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env.str("POSTGRES_DB", default="new_fm_flow").strip(),
-        "USER": env.str("POSTGRES_USER", default="admin").strip(),
-        "PASSWORD": env.str("POSTGRES_PASSWORD", default="lllda06").strip(),
-        "HOST": env.str("POSTGRES_HOST", default="127.0.0.1").strip(),
-        "PORT": int(env("POSTGRES_PORT", default=5432)),
+        'ENGINE': "django.db.backends.postgresql",
+        'NAME': env.str('POSTGRES_DB', default='new_fm_flow').strip(),
+        'USER': env.str('POSTGRES_USER', default='admin').strip(),
+        'PASSWORD': env.str('POSTGRES_PASSWORD', default='lllda06').strip(),
+        'HOST': env.str('POSTGRES_HOST', default='127.0.0.1').strip(),
+        'PORT': int(env('POSTGRES_PORT', default=5432)),
         # опционально
         # "OPTIONS": {"options": "-c client_encoding=UTF8"},
     }

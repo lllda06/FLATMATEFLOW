@@ -48,6 +48,11 @@ class Task(models.Model):
         blank=True,
         related_name="completed_tasks"
     )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="created_tasks"
+    )
     created_at = models.DateTimeField(default=timezone.now)
     completed_at = models.DateTimeField(null=True, blank=True, db_index=True)
 

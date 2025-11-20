@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from .models import Notification
@@ -26,3 +27,8 @@ def mark_all_read(request):
     # возвращаем туда, откуда пришли, либо на страницу уведомлений
     next_url = request.GET.get('next') or 'notifications:list'
     return redirect(next_url)
+
+
+def unread_count(request):
+    count = Notification.objects.filter(recipient=request.user, is_read=False).count()
+    return JsonResponse({'unread_count': count})

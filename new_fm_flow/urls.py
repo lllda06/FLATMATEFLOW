@@ -5,18 +5,16 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import (
     TokenObtainPairView, TokenRefreshView, TokenVerifyView
 )
-
 from accounts.api_jwt import MyTokenObtainPairView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # твои приложения
+    # Подключение маршрутов для приложений
     path("", include(("tasks.urls", "tasks"), namespace="tasks")),
-    path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
-    path("api/", include("tasks.api.urls")),
-    path('notifications/', include('notifications.urls')),
-
+    path('accounts/', include('accounts.urls', namespace='accounts')),
+    path("api/", include("tasks.api.urls")),  # Маршруты для API
+    path('notifications/', include('notifications.urls')),  # Маршруты для уведомлений
 
     # JWT
     path("api/auth/jwt/create/",  MyTokenObtainPairView.as_view(), name="jwt_create"),
