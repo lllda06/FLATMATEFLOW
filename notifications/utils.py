@@ -1,7 +1,31 @@
+import json
+import redis
+
 from django.core.mail import send_mail
 from django.conf import settings
 
 from .models import Notification
+
+redis_client = redis.Redis(host="127.0.0.1", port=6379, db=0)
+
+
+def send_realtime_notification(user_id: int, event: str, payload: dict | None = None):
+    """
+    Отправка real-time уведомления через Redis в FastAPI.
+    user_id — кому шлём (request.user.id или assigned_to.id)
+    event — тип события, например: "invitation_created", "task_created", "task_completed"
+    payload — любые данные, которые нужны на фронте
+    """
+    data = {
+        "user_id": user_id,
+        "event": event,
+        "payload": payload or {},
+    }
+    try:
+        redis_client.publish("notifications", json.dumps(data))
+    except redis.exceptions.ConnectionError:
+        # можно залогировать, но не падать
+        pass
 
 
 def create_notification(
@@ -13,18 +37,26 @@ def create_notification(
     send_email: bool = False,
     email_subject: str | None = None,
     email_body: str | None = None,
+    send_realtime: bool = True,
 ):
-    # Проверка, что recipient существует и у него есть email
-    if not recipient or not hasattr(recipient, "email"):
-        raise ValueError("Recipient must have an 'email' attribute.")
-
-    # Создание уведомления
+    ...
     notification = Notification.objects.create(
         recipient=recipient,
         title=title,
         body=body,
         type=type,
     )
+
+    if send_realtime:
+        send_realtime_notification(
+            user_id=recipient.id,
+            event="notification_created",
+            payload={
+                "title": title,
+                "body": body,
+                "type": type,
+            },
+        )
 
     # Только если явно сказано send_email=True и у recipient есть email
     if send_email and recipient.email:

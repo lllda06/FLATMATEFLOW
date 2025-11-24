@@ -10,6 +10,7 @@ from tasks.api_services import get_households, get_household_tasks, get_househol
 from tasks.forms import TaskForm, HouseholdForm, InviteByUsernameForm
 from tasks.models import Household, Task, Invitation
 from tasks.services import create_task, update_task_status
+from notifications.utils import send_realtime_notification
 from tasks.stats_service import get_stats_for_household
 
 
@@ -63,6 +64,15 @@ def task_create(request, pk):
         form = TaskForm(request.POST)
         if form.is_valid():
             task = create_task(house, request.user, form)
+            if task.assigned_to:
+                send_realtime_notification(
+                    user_id=task.assigned_to.id,
+                    event="task_created",
+                    payload={
+                        "task_title": task.title,
+                        "household": house.name,
+                    },
+                )
             messages.success(request, "Задача добавлена.")
             return redirect("tasks:household_detail", pk=pk)
 
@@ -116,6 +126,14 @@ def invite_by_username(request, pk):
                 messages.info(request, "Этот пользователь уже состоит в хозяйстве.")
                 return redirect("tasks:household_detail", pk=pk)
             inv = Invitation.objects.create(household=house, inviter=request.user, invitee=user)
+            send_realtime_notification(
+                user_id=user.id,
+                event="invitation_created",
+                payload={
+                    "household_name": house.name,
+                    "inviter": request.user.username,
+                },
+            )
             messages.success(request, f"Приглашение отправлено пользователю {user.username}.")
             return redirect("tasks:household_detail", pk=pk)
     else:
