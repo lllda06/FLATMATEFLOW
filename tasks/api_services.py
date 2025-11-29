@@ -1,5 +1,7 @@
 from django.db.models import Sum
 from django.http import JsonResponse
+
+from notifications.models import Notification
 from tasks.models import Household, Task
 from django.shortcuts import get_object_or_404
 from tasks.stats_service import get_stats_for_household
@@ -45,3 +47,13 @@ def get_stats_for_household(request, pk):
         "completed": stats["completed"],
         "total_points": stats["total_points"],
     })
+
+# API для подсчета непрочитанных уведомлений
+def unread_count(request):
+    if request.user.is_authenticated:
+        # Получаем количество непрочитанных уведомлений
+        unread_notifications = Notification.objects.filter(
+            recipient=request.user, is_read=False
+        ).count()
+        return JsonResponse({"unread_count": unread_notifications})
+    return JsonResponse({"error": "User not authenticated"}, status=401)

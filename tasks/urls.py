@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, api_services
 
 app_name = "tasks"
 
@@ -26,4 +26,5 @@ urlpatterns = [
     path("api/households/", views.api_households, name="api_households"),
     path("api/households/<int:pk>/tasks/", views.api_household_tasks, name="api_household_tasks"),
     path("api/households/<int:pk>/stats/", views.api_household_stats, name="api_household_stats"),
+    path('api/notifications/unread_count/', api_services.unread_count, name='unread_count'),
 ]
